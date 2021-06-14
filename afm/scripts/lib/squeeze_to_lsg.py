@@ -1,5 +1,5 @@
 import numpy as np
-from squeeze.squeeze import region_grow
+from lib.squeeze.squeeze import region_grow
 
 def lsgenerator(offset):
     H, W = offset.shape[1:]

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(afm)
+#set(CMAKE_TOOLCHAIN_FILE $ENV{CMAKE_TOOLCHAIN_FILE})
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -16,7 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
 )
-find_package(OpenCV 3.4.3 REQUIRED)
+#find_package(OpenCV 3.4.3 REQUIRED)
+find_package(OpenCV 3.2.0 REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

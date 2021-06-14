@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from config import cfg
 from modeling.afm import AFM
@@ -16,7 +16,7 @@ class Nodo(object):
         self.image = None
         self.header = None 
         self.br = CvBridge()
-        self.pub_img_set=False 
+        self.pub_img_set=True 
         self.image_topic=cfg.image_topic
 
         self.system = AFM(cfg)
@@ -28,7 +28,7 @@ class Nodo(object):
         # Publishers
         self.pub = rospy.Publisher('Lines2d', lines2d, queue_size=1000)
         if self.pub_img_set:
-            self.pub_image = rospy.Publisher('feature_image', Image, queue_size=1000)
+            self.pub_image = rospy.Publisher('/feature_image', Image, queue_size=1000)
 
         # Subscribers
         rospy.Subscriber(self.image_topic,Image,self.callback)
@@ -46,6 +46,8 @@ class Nodo(object):
     def callback(self, msg):
         self.header = msg.header
         self.image = self.br.imgmsg_to_cv2(msg)
+        # self.image = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
+
         
     def start(self,cfg):
         pre_msg_time=rospy.Time(0)
@@ -67,9 +69,13 @@ class Nodo(object):
                     if self.pub_img_set:
                         feat_imge = dst_img.copy()
                         for i in range(feats.shape[0]):
-                            cv2.line(feat_imge, (feats[i, 0], feats[i, 1]),
-                                    (feats[i, 2], feats[i, 3]), (0, 0, 255), 2)
+                            cv2.line(feat_imge, (int(feats[i, 0]), int(feats[i, 1])),
+                                    (int(feats[i, 2]), int(feats[i, 3])), (0, 0, 255), 2)
+                        # image_msg = Image()
+                        # image_msg.height = self.image.cols
+                        # image_msg.width = self.image.rows
                         self.pub_image.publish(self.br.cv2_to_imgmsg(feat_imge, "bgr8"))
+                        # self.pub_image.publish(image_msg)
 
             self.loop_rate.sleep()
 
